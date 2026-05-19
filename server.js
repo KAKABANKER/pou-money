@@ -8,19 +8,19 @@ const path = require('path');
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-// Middleware básico
+// Middleware
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.use(express.static(__dirname));
+app.use(express.static(__dirname)); // Serve arquivos da RAIZ
 
-// CONEXÃO COM BANCO - Use sua URL do Render
+// CONEXÃO COM BANCO
 const pool = new Pool({
-    connectionString: 'postgresql://pou_money_user:mXJ6GiPmWZUbYnIFKwopB7M4l5ANq2cU@dpg-d85p6ldi849s7384shbg-a/pou_money',
+    connectionString: process.env.DATABASE_URL || 'postgresql://pou_money_user:mXJ6GiPmWZUbYnIFKwopB7M4l5ANq2cU@dpg-d85p6ldi849s7384shbg-a/pou_money',
     ssl: { rejectUnauthorized: false }
 });
 
-const JWT_SECRET = 'pou_money_jwt_secret_2025';
+const JWT_SECRET = process.env.JWT_SECRET || 'pou_money_jwt_secret_2025';
 
 // ============ CRIAR TABELAS ============
 async function initDB() {
@@ -43,18 +43,6 @@ async function initDB() {
             )
         `);
         console.log('✅ Tabela users OK');
-
-        await pool.query(`
-            CREATE TABLE IF NOT EXISTS transacoes (
-                id SERIAL PRIMARY KEY,
-                user_id INT REFERENCES users(id),
-                tipo VARCHAR(20) NOT NULL,
-                valor DECIMAL(10,2) NOT NULL,
-                status VARCHAR(20) DEFAULT 'pendente',
-                data_solicitacao TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-            )
-        `);
-        console.log('✅ Tabela transacoes OK');
 
         // Criar ADMIN
         const adminCheck = await pool.query('SELECT * FROM users WHERE email = $1', ['admin@poumoney.com']);
@@ -159,9 +147,7 @@ app.post('/api/login', async (req, res) => {
 // VERIFICAR TOKEN
 app.post('/api/verificar', async (req, res) => {
     const token = req.headers.authorization?.split(' ')[1];
-    if (!token) {
-        return res.json({ autenticado: false });
-    }
+    if (!token) return res.json({ autenticado: false });
 
     try {
         const decoded = jwt.verify(token, JWT_SECRET);
@@ -169,11 +155,7 @@ app.post('/api/verificar', async (req, res) => {
             'SELECT id, nome, email, saldo, moedas, pontos, nivel, is_admin FROM users WHERE id = $1',
             [decoded.id]
         );
-
-        if (result.rows.length === 0) {
-            return res.json({ autenticado: false });
-        }
-
+        if (result.rows.length === 0) return res.json({ autenticado: false });
         res.json({ autenticado: true, user: result.rows[0] });
     } catch (err) {
         res.json({ autenticado: false });
@@ -183,64 +165,39 @@ app.post('/api/verificar', async (req, res) => {
 // SALVAR PONTUAÇÃO
 app.post('/api/salvar-pontuacao', async (req, res) => {
     const token = req.headers.authorization?.split(' ')[1];
-    if (!token) {
-        return res.status(401).json({ error: 'Não autenticado' });
-    }
+    if (!token) return res.status(401).json({ error: 'Não autenticado' });
 
     try {
         const decoded = jwt.verify(token, JWT_SECRET);
         const { pontuacao, moedas } = req.body;
-
         await pool.query(
             'UPDATE users SET moedas = moedas + $1, pontos = pontos + $2 WHERE id = $3',
             [moedas || 0, pontuacao, decoded.id]
         );
-        await pool.query(
-            'UPDATE users SET nivel = GREATEST(1, pontos / 1000 + 1) WHERE id = $1',
-            [decoded.id]
-        );
-
         res.json({ success: true });
     } catch (err) {
         res.status(500).json({ error: 'Erro ao salvar' });
     }
 });
 
-// DEPÓSITO (SIMULADO)
+// DEPÓSITO
 app.post('/api/criar-deposito', async (req, res) => {
     const token = req.headers.authorization?.split(' ')[1];
-    if (!token) {
-        return res.status(401).json({ error: 'Não autenticado' });
-    }
+    if (!token) return res.status(401).json({ error: 'Não autenticado' });
 
     try {
         const decoded = jwt.verify(token, JWT_SECRET);
-        const { valor, cpf, telefone } = req.body;
+        const { valor } = req.body;
+        if (!valor || valor < 10) return res.status(400).json({ error: 'Valor mínimo R$10' });
 
-        if (!valor || valor < 10) {
-            return res.status(400).json({ error: 'Valor mínimo R$10' });
-        }
-
-        // Simular criação de PIX
-        const mockQrCode = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=PIX_MOCK_${Date.now()}`;
-        const mockPixCode = `00020126360014BR.GOV.BCB.PIX0114${Date.now()}@pou.com.br5204000053039865404${valor * 100}5802BR5925POU MONEY6009SAO PAULO62070503***6304E2C7`;
-
-        await pool.query(
-            `INSERT INTO transacoes (user_id, tipo, valor, status, payment_id)
-             VALUES ($1, 'deposito', $2, 'pendente', $3)`,
-            [decoded.id, valor, 'MOCK_' + Date.now()]
-        );
+        const mockQrCode = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=PIX_${Date.now()}`;
+        const mockPixCode = `00020126360014BR.GOV.BCB.PIX0114${Date.now()}@pou.com.br5204000053039865404${valor * 100}5802BR5925POU MONEY6009SAO PAULO6304E2C7`;
 
         res.json({
             success: true,
-            payment: {
-                qr_code: mockQrCode,
-                code: mockPixCode,
-                value: valor
-            }
+            payment: { qr_code: mockQrCode, code: mockPixCode, value: valor }
         });
     } catch (err) {
-        console.error('Erro depósito:', err);
         res.status(500).json({ error: 'Erro ao criar depósito' });
     }
 });
@@ -264,10 +221,7 @@ app.get('/api/admin/usuarios', async (req, res) => {
 
     try {
         const decoded = jwt.verify(token, JWT_SECRET);
-        if (!decoded.is_admin) {
-            return res.status(403).json({ error: 'Acesso negado' });
-        }
-
+        if (!decoded.is_admin) return res.status(403).json({ error: 'Acesso negado' });
         const result = await pool.query('SELECT id, nome, email, saldo, moedas, pontos, nivel, ativo FROM users WHERE is_admin = false ORDER BY id DESC');
         res.json(result.rows);
     } catch (err) {
@@ -275,7 +229,7 @@ app.get('/api/admin/usuarios', async (req, res) => {
     }
 });
 
-// ============ PÁGINAS HTML ============
+// ============ ROTAS DAS PÁGINAS HTML (TUDO NA RAIZ) ============
 app.get('/', (req, res) => res.sendFile(path.join(__dirname, 'login.html')));
 app.get('/login', (req, res) => res.sendFile(path.join(__dirname, 'login.html')));
 app.get('/cadastro', (req, res) => res.sendFile(path.join(__dirname, 'cadastro.html')));
@@ -288,6 +242,14 @@ app.get('/jogo-clicker', (req, res) => res.sendFile(path.join(__dirname, 'jogo-c
 app.get('/admin-entrar', (req, res) => res.sendFile(path.join(__dirname, 'admin-login.html')));
 app.get('/admin-painel', (req, res) => res.sendFile(path.join(__dirname, 'painel-admin.html')));
 
+// 404 handler
+app.use((req, res) => {
+    if (req.path.startsWith('/api/')) {
+        return res.status(404).json({ error: 'Rota não encontrada' });
+    }
+    res.redirect('/login');
+});
+
 // ============ INICIAR SERVIDOR ============
 initDB().then(() => {
     app.listen(PORT, '0.0.0.0', () => {
@@ -296,7 +258,7 @@ initDB().then(() => {
 ║                    🚀 SERVIDOR RODANDO!                       ║
 ╠══════════════════════════════════════════════════════════════╣
 ║  📡 Porta: ${PORT}                                              ║
-║  🔗 URL: http://localhost:${PORT}                               ║
+║  🌐 URL: http://localhost:${PORT}                               ║
 ║  👤 Admin: admin@poumoney.com                                 ║
 ║  🔑 Senha: admin123                                           ║
 ╚══════════════════════════════════════════════════════════════╝
