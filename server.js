@@ -230,18 +230,29 @@ app.get('/api/admin/usuarios', async (req, res) => {
 });
 
 // ============ ROTAS DAS PÁGINAS HTML (TUDO NA RAIZ) ============
-app.get('/', (req, res) => res.sendFile(path.join(__dirname, 'login.html')));
-app.get('/login', (req, res) => res.sendFile(path.join(__dirname, 'login.html')));
-app.get('/cadastro', (req, res) => res.sendFile(path.join(__dirname, 'cadastro.html')));
-app.get('/jogos', (req, res) => res.sendFile(path.join(__dirname, 'jogos.html')));
-app.get('/depositar', (req, res) => res.sendFile(path.join(__dirname, 'depositar.html')));
-app.get('/ranking', (req, res) => res.sendFile(path.join(__dirname, 'ranking.html')));
-app.get('/suporte', (req, res) => res.sendFile(path.join(__dirname, 'suporte.html')));
-app.get('/jogar', (req, res) => res.sendFile(path.join(__dirname, 'jogar.html')));
-app.get('/jogo-clicker', (req, res) => res.sendFile(path.join(__dirname, 'jogo-clicker.html')));
-app.get('/admin-entrar', (req, res) => res.sendFile(path.join(__dirname, 'admin-login.html')));
-app.get('/admin-painel', (req, res) => res.sendFile(path.join(__dirname, 'painel-admin.html')));
+// ============ ROTAS DAS PÁGINAS HTML (USANDO /views) ============
+app.get('/', (req, res) => res.sendFile(path.join(__dirname, 'index.html')));
+app.get('/views/login.html', (req, res) => res.sendFile(path.join(__dirname, 'views', 'login.html')));
+app.get('/views/cadastro.html', (req, res) => res.sendFile(path.join(__dirname, 'views', 'cadastro.html')));
+app.get('/views/jogos.html', (req, res) => res.sendFile(path.join(__dirname, 'views', 'jogos.html')));
+app.get('/views/depositar.html', (req, res) => res.sendFile(path.join(__dirname, 'views', 'depositar.html')));
+app.get('/views/ranking.html', (req, res) => res.sendFile(path.join(__dirname, 'views', 'ranking.html')));
+app.get('/views/suporte.html', (req, res) => res.sendFile(path.join(__dirname, 'views', 'suporte.html')));
+app.get('/views/jogar.html', (req, res) => res.sendFile(path.join(__dirname, 'views', 'jogar.html')));
+app.get('/views/jogo-clicker.html', (req, res) => res.sendFile(path.join(__dirname, 'views', 'jogo-clicker.html')));
+app.get('/views/admin/admin-login.html', (req, res) => res.sendFile(path.join(__dirname, 'views', 'admin', 'admin-login.html')));
+app.get('/views/admin/painel-admin.html', (req, res) => res.sendFile(path.join(__dirname, 'views', 'admin', 'painel-admin.html')));
 
+// Rotas amigáveis
+app.get('/login', (req, res) => res.redirect('/views/login.html'));
+app.get('/cadastro', (req, res) => res.redirect('/views/cadastro.html'));
+app.get('/jogos', (req, res) => res.redirect('/views/jogos.html'));
+app.get('/depositar', (req, res) => res.redirect('/views/depositar.html'));
+app.get('/ranking', (req, res) => res.redirect('/views/ranking.html'));
+app.get('/suporte', (req, res) => res.redirect('/views/suporte.html'));
+app.get('/jogar', (req, res) => res.redirect('/views/jogar.html'));
+app.get('/admin-entrar', (req, res) => res.redirect('/views/admin/admin-login.html'));
+app.get('/admin-painel', (req, res) => res.redirect('/views/admin/painel-admin.html'));
 // 404 handler
 app.use((req, res) => {
     if (req.path.startsWith('/api/')) {
