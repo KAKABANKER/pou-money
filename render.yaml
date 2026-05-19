@@ -1,0 +1,14 @@
+services:
+  - type: web
+    name: pou-money
+    runtime: node
+    plan: free
+    buildCommand: npm install
+    startCommand: node server.js
+    envVars:
+      - key: PORT
+        value: 3000
+      - key: JWT_SECRET
+        value: pou_money_jwt_secret_2025_MUDE_EM_PRODUCAO
+      - key: JWT_REFRESH_SECRET
+        value: pou_money_refresh_secret_2025_MUDE

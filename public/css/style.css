@@ -1,0 +1,151 @@
+:root {
+    --bg: #080B14;
+    --surface: #0E1220;
+    --card: #141928;
+    --border: rgba(255,255,255,0.07);
+    --green: #00E676;
+    --purple: #7C6AFF;
+    --text: #E8EDF5;
+    --muted: #6B7594;
+    --danger: #FF4C6A;
+    --warning: #FFD447;
+    --font-head: 'Syne', sans-serif;
+    --font-body: 'DM Sans', sans-serif;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+    font-family: var(--font-body);
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    overflow-x: hidden;
+}
+
+/* Utilidades */
+.text-green { color: var(--green); }
+.text-purple { color: var(--purple); }
+.text-muted { color: var(--muted); }
+.text-danger { color: var(--danger); }
+.text-warning { color: var(--warning); }
+
+.bg-gradient {
+    position: fixed;
+    inset: 0;
+    background: radial-gradient(circle at 20% 50%, rgba(124,106,255,0.15), transparent 50%),
+                radial-gradient(circle at 80% 80%, rgba(0,230,118,0.08), transparent 50%);
+    pointer-events: none;
+    z-index: -1;
+}
+
+/* Botões */
+.btn-primary {
+    background: linear-gradient(135deg, var(--purple), var(--green));
+    border: none;
+    border-radius: 14px;
+    padding: 14px 28px;
+    color: white;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-family: var(--font-head);
+}
+
+.btn-primary:hover {
+    transform: translateY(-2px);
+    opacity: 0.95;
+    box-shadow: 0 8px 20px rgba(124,106,255,0.3);
+}
+
+.btn-primary:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    transform: none;
+}
+
+.btn-outline {
+    background: transparent;
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 12px 24px;
+    color: var(--text);
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.btn-outline:hover {
+    border-color: var(--purple);
+    color: var(--purple);
+}
+
+/* Cards */
+.card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 24px;
+    padding: 24px;
+    backdrop-filter: blur(10px);
+}
+
+/* Inputs */
+.input-field {
+    width: 100%;
+    padding: 14px 16px;
+    background: rgba(6,8,15,0.6);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    color: var(--text);
+    font-size: 15px;
+    transition: all 0.2s;
+}
+
+.input-field:focus {
+    outline: none;
+    border-color: var(--purple);
+    box-shadow: 0 0 0 3px rgba(124,106,255,0.1);
+}
+
+/* Animações */
+@keyframes fadeInUp {
+    from { opacity: 0; transform: translateY(30px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+.animate { animation: fadeInUp 0.6s ease-out forwards; }
+
+.spinner {
+    display: inline-block;
+    width: 16px;
+    height: 16px;
+    border: 2px solid rgba(255,255,255,0.3);
+    border-top-color: white;
+    border-radius: 50%;
+    animation: spin 0.6s linear infinite;
+    margin-right: 8px;
+    vertical-align: middle;
+}
+
+/* Scrollbar */
+::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+}
+
+::-webkit-scrollbar-track {
+    background: var(--surface);
+}
+
+::-webkit-scrollbar-thumb {
+    background: var(--purple);
+    border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: var(--green);
+}

@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Suporte - Pou Money</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Inter', sans-serif; background: #0A0C15; color: #E8EDF2; }
+        .navbar { background: rgba(10, 12, 21, 0.95); backdrop-filter: blur(20px); border-bottom: 1px solid rgba(108, 92, 231, 0.2); padding: 16px 0; position: fixed; width: 100%; top: 0; z-index: 1000; }
+        .container { max-width: 1280px; margin: 0 auto; padding: 0 32px; display: flex; justify-content: space-between; align-items: center; }
+        .brand { display: flex; align-items: center; gap: 12px; text-decoration: none; }
+        .brand-icon { width: 42px; height: 42px; background: linear-gradient(135deg, #6C5CE7, #00BFA3); border-radius: 14px; display: flex; align-items: center; justify-content: center; overflow: hidden; }
+        .brand-icon img { width: 35px; height: 35px; }
+        .brand-text { font-size: 24px; font-weight: 800; background: linear-gradient(135deg, #FFFFFF, #6C5CE7); -webkit-background-clip: text; background-clip: text; color: transparent; }
+        .nav-menu { display: flex; gap: 24px; align-items: center; }
+        .nav-link { color: #A0A8C0; text-decoration: none; font-weight: 500; transition: all 0.3s; }
+        .nav-link:hover, .nav-link.active { color: #6C5CE7; }
+        .btn { padding: 8px 20px; border-radius: 40px; font-weight: 600; text-decoration: none; }
+        .btn-primary { background: linear-gradient(135deg, #6C5CE7, #00BFA3); color: white; }
+        .main-content { padding: 100px 32px 60px; max-width: 900px; margin: 0 auto; }
+        .support-header { text-align: center; margin-bottom: 40px; }
+        .support-header h1 { font-size: 42px; margin-bottom: 16px; }
+        .card { background: rgba(20, 24, 36, 0.8); border-radius: 24px; padding: 32px; margin-bottom: 24px; border: 1px solid rgba(108, 92, 231, 0.15); }
+        .form-group { margin-bottom: 20px; }
+        .form-group label { display: block; margin-bottom: 8px; font-weight: 500; }
+        .form-group input, .form-group textarea { width: 100%; padding: 14px 18px; background: rgba(10, 12, 21, 0.8); border: 1px solid rgba(108, 92, 231, 0.3); border-radius: 16px; color: white; font-size: 15px; font-family: inherit; }
+        .form-group textarea { resize: vertical; min-height: 120px; }
+        .btn-submit { width: 100%; padding: 14px; background: linear-gradient(135deg, #6C5CE7, #00BFA3); border: none; border-radius: 16px; color: white; font-size: 16px; font-weight: 600; cursor: pointer; }
+        .ticket-list { margin-top: 32px; }
+        .ticket-item { background: rgba(10, 12, 21, 0.6); border-radius: 16px; padding: 20px; margin-bottom: 12px; border-left: 4px solid #6C5CE7; }
+        .ticket-status { display: inline-block; padding: 4px 12px; border-radius: 20px; font-size: 12px; font-weight: 600; margin-bottom: 10px; }
+        .status-aberto { background: rgba(255, 193, 7, 0.2); color: #ffc107; }
+        .status-fechado { background: rgba(0, 191, 163, 0.2); color: #00BFA3; }
+        .warning { background: rgba(255, 193, 7, 0.1); border-radius: 16px; padding: 20px; text-align: center; margin-bottom: 24px; }
+        .mobile-menu-btn { display: none; background: none; border: none; font-size: 24px; color: white; cursor: pointer; }
+        @media (max-width: 768px) { .nav-menu { display: none; } .mobile-menu-btn { display: block; } .main-content { padding: 90px 20px 40px; } }
+        .mobile-nav { display: none; position: fixed; top: 74px; left: 0; width: 100%; background: #0F111A; padding: 20px; flex-direction: column; gap: 16px; z-index: 999; }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="container">
+            <a href="index.html" class="brand"><div class="brand-icon"><img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='45' fill='%236C5CE7'/%3E%3Ccircle cx='35' cy='40' r='6' fill='white'/%3E%3Ccircle cx='65' cy='40' r='6' fill='white'/%3E%3C/svg%3E"></div><div class="brand-text">POU MONEY</div></a>
+            <div class="nav-menu"><a href="index.html" class="nav-link">Início</a><a href="jogar.html" class="nav-link">Jogar</a><a href="ranking.html" class="nav-link">Ranking</a><a href="suporte.html" class="nav-link active">Suporte</a><a href="login.html" class="btn btn-primary">Entrar</a></div>
+            <button class="mobile-menu-btn" id="menuBtn"><i class="fas fa-bars"></i></button>
+        </div>
+        <div class="mobile-nav" id="mobileNav"><a href="index.html">Início</a><a href="jogar.html">Jogar</a><a href="ranking.html">Ranking</a><a href="suporte.html">Suporte</a><a href="login.html">Entrar</a></div>
+    </nav>
+
+    <div class="main-content">
+        <div class="support-header"><h1>📞 Central de Suporte</h1><p>Estamos aqui para ajudar você 24/7</p></div>
+        
+        <div id="authWarning" class="warning" style="display: none;">
+            <i class="fas fa-exclamation-triangle"></i> Você precisa estar logado para abrir um ticket. <a href="login.html" style="color:#6C5CE7;">Faça login aqui</a>
+        </div>
+        
+        <div class="card" id="ticketForm">
+            <h3><i class="fas fa-ticket-alt"></i> Abrir Ticket de Suporte</h3>
+            <form id="supportForm">
+                <div class="form-group"><label>Título</label><input type="text" id="titulo" required placeholder="Ex: Problema com saque"></div>
+                <div class="form-group"><label>Mensagem</label><textarea id="mensagem" required placeholder="Descreva detalhadamente o seu problema..."></textarea></div>
+                <button type="submit" class="btn-submit"><i class="fas fa-paper-plane"></i> Enviar Ticket</button>
+            </form>
+        </div>
+        
+        <div class="ticket-list" id="ticketList"><h3><i class="fas fa-history"></i> Meus Tickets</h3><div class="loading" style="text-align:center; padding:20px;"><i class="fas fa-spinner fa-spin"></i> Carregando...</div></div>
+    </div>
+
+    <script>
+        const API_URL = window.location.origin;
+        let user = null;
+        let token = localStorage.getItem('token');
+        
+        async function verificarAuth() {
+            if (!token) return false;
+            try {
+                const response = await fetch(`${API_URL}/api/verificar`, { headers: { 'Authorization': `Bearer ${token}` } });
+                const data = await response.json();
+                if (data.autenticado) { user = data.user; return true; }
+            } catch(e) {}
+            return false;
+        }
+        
+        async function carregarTickets() {
+            if (!token) { document.getElementById('ticketList').innerHTML = '<div class="card"><p style="text-align:center;">Faça login para ver seus tickets</p></div>'; return; }
+            try {
+                const response = await fetch(`${API_URL}/api/meus-tickets`, { headers: { 'Authorization': `Bearer ${token}` } });
+                const tickets = await response.json();
+                if (tickets.length === 0) { document.getElementById('ticketList').innerHTML = '<div class="card"><p style="text-align:center;">Nenhum ticket encontrado</p></div>'; return; }
+                let html = '<h3><i class="fas fa-history"></i> Meus Tickets</h3>';
+                tickets.forEach(t => {
+                    html += `<div class="ticket-item"><span class="ticket-status status-${t.status === 'aberto' ? 'aberto' : 'fechado'}">${t.status === 'aberto' ? 'Aberto' : 'Respondido'}</span>
+                    <h4>${t.titulo}</h4><p>${t.mensagem.substring(0, 100)}...</p><small style="color:#6A7290;">${new Date(t.data_criacao).toLocaleDateString()}</small>`;
+                    if (t.resposta) html += `<div style="margin-top:12px; padding:10px; background:rgba(108,92,231,0.1); border-radius:12px;"><strong>Resposta:</strong> ${t.resposta}</div>`;
+                    html += `</div>`;
+                });
+                document.getElementById('ticketList').innerHTML = html;
+            } catch(e) { document.getElementById('ticketList').innerHTML = '<div class="card"><p>Erro ao carregar tickets</p></div>'; }
+        }
+        
+        async function init() {
+            const isAuth = await verificarAuth();
+            if (!isAuth) {
+                document.getElementById('authWarning').style.display = 'block';
+                document.getElementById('ticketForm').style.display = 'none';
+                document.getElementById('ticketList').innerHTML = '<div class="card"><p style="text-align:center;">Faça login para ver seus tickets</p></div>';
+                return;
+            }
+            document.getElementById('authWarning').style.display = 'none';
+            document.getElementById('ticketForm').style.display = 'block';
+            carregarTickets();
+            
+            document.getElementById('supportForm').addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const titulo = document.getElementById('titulo').value;
+                const mensagem = document.getElementById('mensagem').value;
+                try {
+                    const response = await fetch(`${API_URL}/api/ticket`, {
+                        method: 'POST', headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+                        body: JSON.stringify({ titulo, mensagem })
+                    });
+                    const result = await response.json();
+                    if (result.success) { alert('Ticket aberto com sucesso!'); document.getElementById('supportForm').reset(); carregarTickets(); }
+                    else alert('Erro ao abrir ticket');
+                } catch(e) { alert('Erro ao enviar'); }
+            });
+        }
+        
+        init();
+        
+        const menuBtn = document.getElementById('menuBtn');
+        const mobileNav = document.getElementById('mobileNav');
+        menuBtn.addEventListener('click', () => { mobileNav.style.display = mobileNav.style.display === 'flex' ? 'none' : 'flex'; });
+    </script>
+</body>
+</html>

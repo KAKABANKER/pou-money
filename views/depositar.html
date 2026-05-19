@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Depositar — Pou Money</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<link rel="stylesheet" href="/css/style.css">
+<style>
+.navbar{background:rgba(6,8,15,0.95);backdrop-filter:blur(20px);border-bottom:1px solid var(--border);padding:0 32px;height:64px;position:fixed;width:100%;top:0;display:flex;align-items:center;justify-content:space-between;z-index:100}
+.saldo-badge{background:rgba(0,230,118,0.12);border:1px solid rgba(0,230,118,0.25);border-radius:20px;padding:6px 16px;font-size:14px;font-weight:600;color:var(--green);display:flex;align-items:center;gap:6px}
+.page{padding:96px 20px 60px;max-width:520px;margin:0 auto}
+.page-title{font-family:var(--font-head);font-size:28px;font-weight:800;margin-bottom:4px}
+.quick-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin:20px 0}
+.quick-btn{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:12px;text-align:center;cursor:pointer;font-family:var(--font-head);font-weight:700;color:var(--text)}
+.quick-btn.active{background:rgba(0,230,118,0.12);border-color:var(--green);color:var(--green)}
+.valor-wrap{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:18px 20px;display:flex;align-items:center;gap:12px;margin-bottom:16px}
+.valor-prefix{font-family:var(--font-head);font-size:22px;font-weight:800;color:var(--green)}
+.valor-input{flex:1;background:none;border:none;outline:none;font-family:var(--font-head);font-size:28px;font-weight:800;color:var(--text)}
+.fields-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px}
+.field-input{width:100%;padding:12px 16px;background:var(--card);border:1px solid var(--border);border-radius:12px;color:var(--text)}
+.btn-pix{width:100%;background:var(--green);border:none;border-radius:14px;padding:17px;font-family:var(--font-head);font-weight:800;color:#080B14;cursor:pointer}
+.pix-result{display:none;background:var(--card);border-radius:20px;padding:28px 24px;text-align:center}
+.qr-wrap{background:white;border-radius:16px;padding:16px;display:inline-block;margin:20px 0}
+.qr-wrap img{width:180px;height:180px}
+@media(max-width:480px){.quick-grid{grid-template-columns:repeat(2,1fr)}.fields-grid{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<nav class="navbar">
+    <a href="/jogos" style="display:flex;align-items:center;gap:10px;text-decoration:none"><div class="brand-icon"><i class="fas fa-gamepad"></i></div><span class="brand-text">POU MONEY</span></a>
+    <div class="saldo-badge"><i class="fas fa-wallet"></i> R$ <span id="saldoNav">0,00</span></div>
+    <a href="/jogos" style="color:var(--muted);text-decoration:none"><i class="fas fa-arrow-left"></i> Voltar</a>
+</nav>
+<div class="page">
+    <div id="formSection">
+        <h1 class="page-title">💰 Depositar</h1>
+        <div class="quick-grid">
+            <button class="quick-btn" data-val="10">R$10</button>
+            <button class="quick-btn" data-val="25">R$25</button>
+            <button class="quick-btn" data-val="50">R$50</button>
+            <button class="quick-btn" data-val="100">R$100</button>
+        </div>
+        <div class="valor-wrap"><span class="valor-prefix">R$</span><input class="valor-input" type="number" id="valorInput" placeholder="0" min="10"></div>
+        <div class="fields-grid">
+            <input class="field-input" type="text" id="cpfInput" placeholder="CPF">
+            <input class="field-input" type="text" id="foneInput" placeholder="Telefone">
+        </div>
+        <div id="errorBox" style="background:rgba(255,71,87,0.1);border:1px solid rgba(255,71,87,0.3);border-radius:12px;padding:12px;display:none;margin-bottom:16px;color:#ff6b78"></div>
+        <button class="btn-pix" id="btnGerar"><i class="fas fa-qrcode"></i> Gerar PIX</button>
+    </div>
+    <div class="pix-result" id="pixResult">
+        <div class="success-badge" style="background:rgba(0,230,118,0.12);border-radius:20px;padding:6px 16px;display:inline-block;margin-bottom:20px"><i class="fas fa-check-circle"></i> PIX Gerado</div>
+        <div class="qr-wrap"><img id="qrImg" src=""></div>
+        <div class="pix-code-box" id="pixCodeBox" style="background:rgba(6,8,15,0.6);padding:14px;border-radius:12px;word-break:break-all;margin-bottom:16px"></div>
+        <button class="btn-copy" id="btnCopy" style="width:100%;background:rgba(0,230,118,0.12);border:none;padding:14px;border-radius:12px;cursor:pointer">Copiar Código</button>
+        <button class="btn-novo" id="btnNovo" style="width:100%;margin-top:12px;background:none;border:1px solid var(--border);padding:12px;border-radius:12px;cursor:pointer">Fazer outro depósito</button>
+    </div>
+</div>
+<script src="/js/auth.js"></script>
+<script>
+const token = localStorage.getItem('pm_token');
+if (!token) window.location.href = '/login';
+
+async function carregarSaldo() {
+    try {
+        const r = await Auth.fetchAuth(`${Auth.API}/api/verificar`);
+        const d = await r.json();
+        if (d.autenticado) document.getElementById('saldoNav').textContent = parseFloat(d.user.saldo).toFixed(2);
+    } catch(e) {}
+}
+carregarSaldo();
+
+document.querySelectorAll('.quick-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+        document.querySelectorAll('.quick-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        document.getElementById('valorInput').value = btn.dataset.val;
+    });
+});
+
+document.getElementById('btnGerar').addEventListener('click', async () => {
+    const valor = parseFloat(document.getElementById('valorInput').value);
+    const cpf = document.getElementById('cpfInput').value.replace(/\D/g,'');
+    const fone = document.getElementById('foneInput').value;
+    const errorBox = document.getElementById('errorBox');
+    if (!valor || valor < 10) { errorBox.style.display = 'block'; errorBox.textContent = 'Valor mínimo R$10'; return; }
+    if (!cpf || cpf.length < 11) { errorBox.style.display = 'block'; errorBox.textContent = 'CPF inválido'; return; }
+    errorBox.style.display = 'none';
+    const btn = document.getElementById('btnGerar');
+    btn.disabled = true;
+    btn.innerHTML = '<span class="spinner"></span> Gerando...';
+    try {
+        const r = await Auth.fetchAuth(`${Auth.API}/api/criar-deposito`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ valor, cpf, telefone: fone })
+        });
+        const d = await r.json();
+        if (d.success) {
+            document.getElementById('formSection').style.display = 'none';
+            document.getElementById('pixResult').style.display = 'block';
+            document.getElementById('qrImg').src = d.payment.qr_code;
+            document.getElementById('pixCodeBox').textContent = d.payment.code;
+        } else { errorBox.style.display = 'block'; errorBox.textContent = d.error || 'Erro'; }
+    } catch(e) { errorBox.style.display = 'block'; errorBox.textContent = 'Erro ao conectar'; }
+    finally { btn.disabled = false; btn.innerHTML = '<i class="fas fa-qrcode"></i> Gerar PIX'; }
+});
+
+document.getElementById('btnCopy').addEventListener('click', () => {
+    navigator.clipboard.writeText(document.getElementById('pixCodeBox').textContent);
+    alert('Código copiado!');
+});
+document.getElementById('btnNovo').addEventListener('click', () => {
+    document.getElementById('pixResult').style.display = 'none';
+    document.getElementById('formSection').style.display = 'block';
+    document.getElementById('valorInput').value = '';
+});
+</script>
+</body>
+</html>

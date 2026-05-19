@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Crash — Pou Money</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<style>
+:root{--bg:#06080F;--card:#0F1523;--border:rgba(255,255,255,0.06);--green:#00E676;--purple:#7C6AFF;--red:#FF4757;--orange:#FF9500;--text:#E8EDF5;--muted:#5A6380;--font-head:'Syne',sans-serif;--font-body:'DM Sans',sans-serif}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:var(--font-body);background:var(--bg);color:var(--text);min-height:100vh}
+.navbar{background:rgba(6,8,15,.95);backdrop-filter:blur(20px);border-bottom:1px solid var(--border);height:60px;position:fixed;width:100%;top:0;display:flex;align-items:center;justify-content:space-between;padding:0 24px;z-index:100}
+.back-btn{display:flex;align-items:center;gap:8px;color:var(--muted);text-decoration:none;font-size:14px;font-weight:500;transition:color .2s}
+.back-btn:hover{color:var(--text)}
+.nav-saldo{display:flex;align-items:center;gap:8px;background:rgba(0,230,118,.08);border:1px solid rgba(0,230,118,.15);padding:5px 14px;border-radius:40px;font-size:13px}
+.nav-saldo strong{color:var(--green);font-family:var(--font-head)}
+
+.game-wrap{padding:76px 16px 40px;max-width:900px;margin:0 auto;display:grid;grid-template-columns:300px 1fr;gap:24px;align-items:start}
+
+/* PANEL */
+.panel{background:var(--card);border:1px solid var(--border);border-radius:24px;padding:24px}
+.panel-title{font-family:var(--font-head);font-size:16px;margin-bottom:20px;display:flex;align-items:center;gap:8px}
+.form-group{margin-bottom:16px}
+.form-group label{display:block;font-size:12px;color:var(--muted);font-weight:600;text-transform:uppercase;letter-spacing:.05em;margin-bottom:8px}
+.input-field{width:100%;padding:12px 14px;background:rgba(6,8,15,.6);border:1px solid var(--border);border-radius:12px;color:var(--text);font-size:15px;font-family:var(--font-head);font-weight:700;outline:none;transition:border-color .2s}
+.input-field:focus{border-color:var(--purple)}
+.quick-btns{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}
+.quick-btn{background:rgba(255,255,255,.05);border:1px solid var(--border);border-radius:8px;padding:5px 12px;color:var(--muted);font-size:12px;cursor:pointer;transition:all .2s;font-family:var(--font-head)}
+.quick-btn:hover{background:rgba(255,255,255,.1);color:var(--text)}
+
+.auto-cashout{display:flex;gap:8px;align-items:center}
+.auto-cashout span{font-size:13px;color:var(--muted);white-space:nowrap}
+
+.btn-apostar{width:100%;padding:14px;background:linear-gradient(135deg,var(--purple),var(--green));border:none;border-radius:14px;color:#fff;font-size:15px;font-weight:800;font-family:var(--font-head);cursor:pointer;transition:opacity .2s;margin-bottom:10px}
+.btn-apostar:hover{opacity:.9}
+.btn-apostar:disabled{opacity:.4;cursor:not-allowed}
+.btn-cashout-crash{width:100%;padding:14px;background:linear-gradient(135deg,var(--orange),#ff6b00);border:none;border-radius:14px;color:#fff;font-size:15px;font-weight:800;font-family:var(--font-head);cursor:pointer;display:none;animation:glow 1.5s ease-in-out infinite}
+@keyframes glow{0%,100%{box-shadow:0 0 0 0 rgba(255,149,0,.3)}50%{box-shadow:0 0 16px rgba(255,149,0,.4)}}
+
+.historico{margin-top:16px}
+.historico-title{font-size:12px;color:var(--muted);margin-bottom:8px;font-weight:600;text-transform:uppercase}
+.hist-list{display:flex;flex-wrap:wrap;gap:6px}
+.hist-item{padding:3px 10px;border-radius:20px;font-size:12px;font-weight:700;font-family:var(--font-head)}
+.hi-low{background:rgba(255,71,87,.15);color:var(--red)}
+.hi-med{background:rgba(255,149,0,.15);color:var(--orange)}
+.hi-high{background:rgba(0,230,118,.15);color:var(--green)}
+
+/* CRASH CANVAS AREA */
+.crash-area{background:var(--card);border:1px solid var(--border);border-radius:24px;overflow:hidden}
+.crash-header{padding:16px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
+.mult-big{font-family:var(--font-head);font-size:48px;font-weight:800;transition:color .1s}
+.mult-big.running{color:var(--green)}
+.mult-big.crashed{color:var(--red)}
+.mult-big.waiting{color:var(--muted)}
+.status-badge{padding:6px 14px;border-radius:20px;font-size:13px;font-weight:700;font-family:var(--font-head)}
+.sb-waiting{background:rgba(90,99,128,.15);color:var(--muted)}
+.sb-running{background:rgba(0,230,118,.12);color:var(--green)}
+.sb-crashed{background:rgba(255,71,87,.12);color:var(--red)}
+canvas{display:block;width:100%;height:240px;background:transparent}
+.crash-footer{padding:12px 20px;border-top:1px solid var(--border);font-size:13px;color:var(--muted);text-align:center}
+.potencial-ganho{font-family:var(--font-head);font-size:16px;color:var(--green)}
+
+.result-overlay{display:none;position:fixed;inset:0;background:rgba(6,8,15,.85);backdrop-filter:blur(10px);z-index:200;align-items:center;justify-content:center}
+.result-overlay.show{display:flex}
+.result-card{background:var(--card);border:1px solid var(--border);border-radius:28px;padding:40px;text-align:center;max-width:380px;width:90%}
+.result-emoji{font-size:60px;margin-bottom:16px;display:block}
+.result-title{font-family:var(--font-head);font-size:28px;margin-bottom:8px}
+.result-amount{font-family:var(--font-head);font-size:40px;font-weight:800;margin:16px 0}
+.ra-win{color:var(--green)}
+.ra-lose{color:var(--red)}
+.btn-new{background:linear-gradient(135deg,var(--purple),var(--green));border:none;padding:14px 32px;border-radius:14px;color:#fff;font-size:16px;font-weight:700;font-family:var(--font-head);cursor:pointer;width:100%;margin-top:8px}
+
+@media(max-width:768px){.game-wrap{grid-template-columns:1fr;padding:72px 12px 32px}.mult-big{font-size:36px}}
+</style>
+</head>
+<body>
+<nav class="navbar">
+    <a href="/jogos" class="back-btn"><i class="fas fa-arrow-left"></i> Voltar</a>
+    <div style="font-family:var(--font-head);font-size:16px">🚀 CRASH</div>
+    <div class="nav-saldo">R$ <strong id="navSaldo">0,00</strong></div>
+</nav>
+
+<div class="game-wrap">
+    <div class="panel">
+        <div class="panel-title">💰 Apostar</div>
+        <div class="form-group">
+            <label>Valor da aposta</label>
+            <input type="number" class="input-field" id="apostaInput" value="1.00" min="0.5" max="500" step="0.5">
+            <div class="quick-btns">
+                <button class="quick-btn" onclick="setAposta(.5)">0.50</button>
+                <button class="quick-btn" onclick="setAposta(1)">1.00</button>
+                <button class="quick-btn" onclick="setAposta(5)">5.00</button>
+                <button class="quick-btn" onclick="setAposta(25)">25.00</button>
+                <button class="quick-btn" onclick="dobrar()">2×</button>
+                <button class="quick-btn" onclick="metade()">½</button>
+            </div>
+        </div>
+        <div class="form-group">
+            <label>Auto Cashout (opcional)</label>
+            <div class="auto-cashout">
+                <input type="number" class="input-field" id="autoCashout" placeholder="Ex: 2.00" min="1.01" step="0.1" style="flex:1">
+                <span>×</span>
+            </div>
+        </div>
+
+        <button class="btn-apostar" id="btnApostar">🚀 Fazer Aposta</button>
+        <button class="btn-cashout-crash" id="btnCashout">💰 Sacar <span id="cashoutMult">1.00×</span></button>
+
+        <div class="historico">
+            <div class="historico-title">Histórico</div>
+            <div class="hist-list" id="histList"></div>
+        </div>
+    </div>
+
+    <div class="crash-area">
+        <div class="crash-header">
+            <div>
+                <div class="mult-big waiting" id="multBig">1.00×</div>
+                <div style="font-size:12px;color:var(--muted);margin-top:2px" id="apostaInfo">Aguardando aposta...</div>
+            </div>
+            <div class="status-badge sb-waiting" id="statusBadge">Aguardando</div>
+        </div>
+        <canvas id="crashCanvas"></canvas>
+        <div class="crash-footer">
+            Ganho potencial: <span class="potencial-ganho" id="potencial">R$ 0,00</span>
+        </div>
+    </div>
+</div>
+
+<div class="result-overlay" id="resultOverlay">
+    <div class="result-card">
+        <span class="result-emoji" id="resultEmoji">🚀</span>
+        <div class="result-title" id="resultTitle">Resultado</div>
+        <div class="result-amount" id="resultAmount">R$ 0,00</div>
+        <div style="color:var(--muted);font-size:14px;margin-bottom:4px" id="resultSub"></div>
+        <button class="btn-new" id="btnNew">Jogar Novamente</button>
+    </div>
+</div>
+
+<script src="/assets/auth.js"></script>
+<script>
+let userData = null;
+let gameToken = null;
+let emJogo = false;
+let emVoo = false;
+let multAtual = 1.0;
+let animFrame = null;
+let startTime = null;
+let crashPoint = null;
+let apostado = false;
+let aposta = 0;
+const historico = [];
+
+const canvas = document.getElementById('crashCanvas');
+const ctx = canvas.getContext('2d');
+const points = [];
+
+function resizeCanvas() {
+    canvas.width = canvas.offsetWidth;
+    canvas.height = canvas.offsetHeight || 240;
+}
+resizeCanvas();
+window.addEventListener('resize', () => { resizeCanvas(); desenharGrafico(); });
+
+(async () => {
+    userData = await Auth.exigirAuth();
+    if (!userData) return;
+    document.getElementById('navSaldo').textContent = parseFloat(userData.saldo).toFixed(2);
+    desenharGrafico();
+})();
+
+function setAposta(v) { if(!apostado) document.getElementById('apostaInput').value = v.toFixed(2); }
+function dobrar() { if(!apostado) { const v = parseFloat(document.getElementById('apostaInput').value)||1; document.getElementById('apostaInput').value = Math.min(v*2, 500).toFixed(2); } }
+function metade() { if(!apostado) { const v = parseFloat(document.getElementById('apostaInput').value)||1; document.getElementById('apostaInput').value = Math.max(v/2, 0.5).toFixed(2); } }
+
+async function fazerAposta() {
+    aposta = parseFloat(document.getElementById('apostaInput').value);
+    if (!aposta || aposta < 0.5) { alert('Aposta mínima: R$ 0,50'); return; }
+
+    const btn = document.getElementById('btnApostar');
+    btn.disabled = true;
+    btn.textContent = 'Apostando...';
+
+    try {
+        const r = await Auth.fetchAuth(`${Auth.API}/api/jogo/crash/apostar`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ aposta })
+        });
+        const d = await r.json();
+        if (!d.success) { alert(d.error||'Erro'); btn.disabled=false; btn.textContent='🚀 Fazer Aposta'; return; }
+
+        gameToken = d.gameToken;
+        apostado = true;
+        userData.saldo = parseFloat(userData.saldo) - aposta;
+        document.getElementById('navSaldo').textContent = userData.saldo.toFixed(2);
+        document.getElementById('apostaInput').disabled = true;
+        document.getElementById('btnApostar').style.display = 'none';
+        document.getElementById('btnCashout').style.display = 'block';
+        document.getElementById('apostaInfo').textContent = `Apostado: R$ ${aposta.toFixed(2)}`;
+        iniciarVoo();
+    } catch(e) {
+        alert('Erro ao apostar');
+        btn.disabled = false;
+        btn.textContent = '🚀 Fazer Aposta';
+    }
+}
+
+function iniciarVoo() {
+    emVoo = true;
+    multAtual = 1.0;
+    points.length = 0;
+    startTime = Date.now();
+
+    document.getElementById('statusBadge').className = 'status-badge sb-running';
+    document.getElementById('statusBadge').textContent = 'Em voo!';
+
+    const autoCashoutVal = parseFloat(document.getElementById('autoCashout').value);
+
+    function tick() {
+        if (!emVoo) return;
+        const elapsed = (Date.now() - startTime) / 1000;
+        // Curva exponencial
+        multAtual = parseFloat(Math.pow(1.06, elapsed * 2).toFixed(2));
+
+        points.push({ x: elapsed, y: multAtual });
+        if (points.length > 200) points.shift();
+
+        document.getElementById('multBig').textContent = multAtual.toFixed(2) + '×';
+        document.getElementById('multBig').className = 'mult-big running';
+        document.getElementById('cashoutMult').textContent = multAtual.toFixed(2) + '×';
+        document.getElementById('potencial').textContent = 'R$ ' + (aposta * multAtual).toFixed(2);
+        desenharGrafico();
+
+        // Auto cashout
+        if (autoCashoutVal && multAtual >= autoCashoutVal) {
+            fazerCashout();
+            return;
+        }
+
+        animFrame = requestAnimationFrame(tick);
+    }
+    tick();
+}
+
+async function fazerCashout() {
+    if (!emVoo || !gameToken) return;
+    emVoo = false;
+    cancelAnimationFrame(animFrame);
+    const multFinal = multAtual;
+
+    try {
+        const r = await Auth.fetchAuth(`${Auth.API}/api/jogo/crash/cashout`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ gameToken, multiplicador: multFinal })
+        });
+        const d = await r.json();
+
+        registrarHistorico(multFinal, true);
+        document.getElementById('navSaldo').textContent = parseFloat(d.novoSaldo || userData.saldo + d.ganho).toFixed(2);
+        mostrarResultado(d.ganhou, aposta, d.ganho, d.crashPoint, multFinal);
+    } catch(e) {
+        alert('Erro no cashout');
+        resetar();
+    }
+}
+
+function registrarHistorico(mult, player) {
+    historico.unshift(mult);
+    if (historico.length > 12) historico.pop();
+    const list = document.getElementById('histList');
+    list.innerHTML = historico.map(m => {
+        const cls = m < 1.5 ? 'hi-low' : m < 3 ? 'hi-med' : 'hi-high';
+        return `<div class="hist-item ${cls}">${m.toFixed(2)}×</div>`;
+    }).join('');
+}
+
+function mostrarResultado(ganhou, aposta, ganho, cp, multFinal) {
+    document.getElementById('resultEmoji').textContent = ganhou ? '🎉' : '💥';
+    document.getElementById('resultTitle').textContent = ganhou ? 'Cashout feito!' : 'CRASH!';
+    const amtEl = document.getElementById('resultAmount');
+    if (ganhou) {
+        amtEl.textContent = `+R$ ${ganho.toFixed(2)}`;
+        amtEl.className = 'result-amount ra-win';
+        document.getElementById('resultSub').textContent = `${multFinal.toFixed(2)}× antes do crash em ${cp.toFixed(2)}×`;
+    } else {
+        amtEl.textContent = `-R$ ${aposta.toFixed(2)}`;
+        amtEl.className = 'result-amount ra-lose';
+        document.getElementById('resultSub').textContent = `Crash em ${cp.toFixed(2)}×`;
+    }
+    document.getElementById('resultOverlay').classList.add('show');
+    resetar(false);
+}
+
+function resetar(limpar = true) {
+    emVoo = false;
+    apostado = false;
+    gameToken = null;
+    cancelAnimationFrame(animFrame);
+    if(limpar) {
+        points.length = 0;
+        multAtual = 1.0;
+        document.getElementById('multBig').textContent = '1.00×';
+        document.getElementById('multBig').className = 'mult-big waiting';
+        document.getElementById('statusBadge').className = 'status-badge sb-waiting';
+        document.getElementById('statusBadge').textContent = 'Aguardando';
+        document.getElementById('apostaInfo').textContent = 'Aguardando aposta...';
+        document.getElementById('potencial').textContent = 'R$ 0,00';
+        desenharGrafico();
+    }
+    document.getElementById('btnApostar').style.display = 'block';
+    document.getElementById('btnApostar').disabled = false;
+    document.getElementById('btnApostar').textContent = '🚀 Fazer Aposta';
+    document.getElementById('btnCashout').style.display = 'none';
+    document.getElementById('apostaInput').disabled = false;
+}
+
+function desenharGrafico() {
+    const W = canvas.width, H = canvas.height;
+    ctx.clearRect(0, 0, W, H);
+
+    // Grid
+    ctx.strokeStyle = 'rgba(255,255,255,0.04)';
+    ctx.lineWidth = 1;
+    for (let i = 0; i <= 5; i++) {
+        const y = H - (H/5)*i;
+        ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(W, y); ctx.stroke();
+    }
+
+    if (points.length < 2) return;
+
+    const maxX = Math.max(points[points.length-1].x, 5);
+    const maxY = Math.max(points[points.length-1].y * 1.1, 2);
+
+    const toX = x => (x / maxX) * (W - 40) + 20;
+    const toY = y => H - 20 - ((y - 1) / (maxY - 1)) * (H - 40);
+
+    // Fill
+    ctx.beginPath();
+    ctx.moveTo(toX(points[0].x), H);
+    points.forEach(p => ctx.lineTo(toX(p.x), toY(p.y)));
+    ctx.lineTo(toX(points[points.length-1].x), H);
+    ctx.closePath();
+    const grad = ctx.createLinearGradient(0, 0, 0, H);
+    grad.addColorStop(0, 'rgba(0,230,118,0.3)');
+    grad.addColorStop(1, 'rgba(0,230,118,0)');
+    ctx.fillStyle = grad;
+    ctx.fill();
+
+    // Line
+    ctx.beginPath();
+    ctx.moveTo(toX(points[0].x), toY(points[0].y));
+    points.forEach(p => ctx.lineTo(toX(p.x), toY(p.y)));
+    ctx.strokeStyle = '#00E676';
+    ctx.lineWidth = 2.5;
+    ctx.stroke();
+
+    // Dot
+    const last = points[points.length-1];
+    ctx.beginPath();
+    ctx.arc(toX(last.x), toY(last.y), 5, 0, Math.PI*2);
+    ctx.fillStyle = '#00E676';
+    ctx.fill();
+}
+
+document.getElementById('btnApostar').addEventListener('click', fazerAposta);
+document.getElementById('btnCashout').addEventListener('click', fazerCashout);
+document.getElementById('btnNew').addEventListener('click', () => {
+    document.getElementById('resultOverlay').classList.remove('show');
+    resetar(true);
+});
+</script>
+</body>
+</html>

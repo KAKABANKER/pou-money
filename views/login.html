@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Entrar — Pou Money</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<link rel="stylesheet" href="/css/style.css">
+<style>
+body{display:flex;align-items:center;justify-content:center;min-height:100vh;padding:20px}
+.card{background:rgba(13,17,32,0.95);border:1px solid var(--border);border-radius:28px;padding:48px 40px;width:100%;max-width:440px;backdrop-filter:blur(20px)}
+.logo{text-align:center;margin-bottom:36px}
+.logo-icon{width:64px;height:64px;background:linear-gradient(135deg,var(--purple),var(--green));border-radius:18px;display:flex;align-items:center;justify-content:center;margin:0 auto 16px;font-size:28px}
+.logo h1{font-family:var(--font-head);font-size:26px;background:linear-gradient(90deg,#fff,var(--purple));-webkit-background-clip:text;background-clip:text;color:transparent}
+.form-group{margin-bottom:18px}
+.form-group label{display:block;font-size:13px;color:var(--muted);margin-bottom:8px}
+.input-wrap{position:relative}
+.input-wrap i{position:absolute;left:16px;top:50%;transform:translateY(-50%);color:var(--muted)}
+.input-wrap input{width:100%;padding:14px 16px 14px 44px;background:rgba(6,8,15,.6);border:1px solid var(--border);border-radius:14px;color:var(--text);font-size:15px}
+.input-wrap input:focus{border-color:var(--purple);outline:none}
+.eye-btn{position:absolute;right:14px;top:50%;transform:translateY(-50%);background:none;border:none;color:var(--muted);cursor:pointer}
+.error-box{background:rgba(255,71,87,.1);border:1px solid rgba(255,71,87,.3);border-radius:12px;padding:12px;color:#ff6b78;display:none;margin-bottom:16px}
+.error-box.show{display:flex;align-items:center;gap:8px}
+.badge-bonus{background:linear-gradient(135deg,rgba(0,230,118,.1),rgba(124,106,255,.1));border:1px solid rgba(0,230,118,.2);border-radius:12px;padding:12px;text-align:center;margin-bottom:24px;font-size:14px;color:var(--green)}
+.divider{display:flex;align-items:center;gap:12px;margin:24px 0;color:var(--muted)}
+.divider::before,.divider::after{content:'';flex:1;height:1px;background:var(--border)}
+.link-row{text-align:center;color:var(--muted);font-size:14px}
+.link-row a{color:var(--green);text-decoration:none}
+</style>
+</head>
+<body>
+<div class="bg-gradient"></div>
+<div class="card">
+    <div class="logo">
+        <div class="logo-icon">🐾</div>
+        <h1>POU MONEY</h1>
+    </div>
+    <div class="badge-bonus">🎁 Bônus de boas-vindas: <strong>R$ 10,00 + 100 moedas</strong></div>
+    <div id="errorBox" class="error-box"><i class="fas fa-exclamation-circle"></i><span id="errorMsg"></span></div>
+    <form id="loginForm">
+        <div class="form-group">
+            <label>Email</label>
+            <div class="input-wrap">
+                <i class="fas fa-envelope"></i>
+                <input type="email" id="email" placeholder="seu@email.com" required>
+            </div>
+        </div>
+        <div class="form-group">
+            <label>Senha</label>
+            <div class="input-wrap">
+                <i class="fas fa-lock"></i>
+                <input type="password" id="senha" placeholder="••••••••" required>
+                <button type="button" class="eye-btn" id="toggleSenha"><i class="fas fa-eye"></i></button>
+            </div>
+        </div>
+        <button type="submit" class="btn-primary" id="submitBtn" style="width:100%">Entrar</button>
+    </form>
+    <div class="divider">ou</div>
+    <div class="link-row"><a href="/cadastro">Criar conta gratuita →</a></div>
+</div>
+<script src="/js/auth.js"></script>
+<script>
+Auth.checarSessaoPublica();
+document.getElementById('toggleSenha').addEventListener('click', function() {
+    const input = document.getElementById('senha');
+    const icon = this.querySelector('i');
+    if (input.type === 'password') { input.type = 'text'; icon.className = 'fas fa-eye-slash'; }
+    else { input.type = 'password'; icon.className =fas 'fas fa-eye'; }
+});
+document.getElementById('loginForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const email = document.getElementById('email').value.trim();
+    const senha = document.getElementById('senha').value;
+    const errorBox = document.getElementById('errorBox');
+    const submitBtn = document.getElementById('submitBtn');
+    errorBox.classList.remove('show');
+    submitBtn.disabled = true;
+    submitBtn.innerHTML = '<span class="spinner"></span> Entrando...';
+    try {
+        const r = await fetch(`${Auth.API}/api/login`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email, senha })
+        });
+        const d = await r.json();
+        if (d.success) {
+            Auth.setSession(d.token, d.refreshToken);
+            window.location.href = d.user.is_admin ? '/admin-painel' : '/jogos';
+        } else {
+            document.getElementById('errorMsg').textContent = d.error || 'Email ou senha incorretos';
+            errorBox.classList.add('show');
+            submitBtn.disabled = false;
+            submitBtn.innerHTML = 'Entrar';
+        }
+    } catch(err) {
+        document.getElementById('errorMsg').textContent = 'Erro ao conectar';
+        errorBox.classList.add('show');
+        submitBtn.disabled = false;
+        submitBtn.innerHTML = 'Entrar';
+    }
+});
+</script>
+</body>
+</html>

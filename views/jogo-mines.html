@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mines — Pou Money</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<style>
+:root{--bg:#06080F;--card:#0F1523;--border:rgba(255,255,255,0.06);--green:#00E676;--purple:#7C6AFF;--red:#FF4757;--orange:#FF9500;--text:#E8EDF5;--muted:#5A6380;--font-head:'Syne',sans-serif;--font-body:'DM Sans',sans-serif}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:var(--font-body);background:var(--bg);color:var(--text);min-height:100vh}
+.navbar{background:rgba(6,8,15,.95);backdrop-filter:blur(20px);border-bottom:1px solid var(--border);height:60px;position:fixed;width:100%;top:0;display:flex;align-items:center;justify-content:space-between;padding:0 24px;z-index:100}
+.back-btn{display:flex;align-items:center;gap:8px;color:var(--muted);text-decoration:none;font-size:14px;font-weight:500;transition:color .2s}
+.back-btn:hover{color:var(--text)}
+.nav-saldo{display:flex;align-items:center;gap:8px;background:rgba(0,230,118,.08);border:1px solid rgba(0,230,118,.15);padding:5px 14px;border-radius:40px;font-size:13px}
+.nav-saldo strong{color:var(--green);font-family:var(--font-head)}
+.game-wrap{padding:76px 16px 40px;max-width:900px;margin:0 auto;display:grid;grid-template-columns:300px 1fr;gap:24px;align-items:start}
+
+/* PAINEL ESQUERDO */
+.panel{background:var(--card);border:1px solid var(--border);border-radius:24px;padding:24px}
+.panel-title{font-family:var(--font-head);font-size:16px;margin-bottom:20px;display:flex;align-items:center;gap:8px}
+.form-group{margin-bottom:16px}
+.form-group label{display:block;font-size:12px;color:var(--muted);font-weight:600;text-transform:uppercase;letter-spacing:.05em;margin-bottom:8px}
+.input-row{display:flex;gap:8px}
+.input-field{width:100%;padding:12px 14px;background:rgba(6,8,15,.6);border:1px solid var(--border);border-radius:12px;color:var(--text);font-size:15px;font-family:var(--font-head);font-weight:700;outline:none;transition:border-color .2s}
+.input-field:focus{border-color:var(--purple)}
+.quick-btns{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}
+.quick-btn{background:rgba(255,255,255,.05);border:1px solid var(--border);border-radius:8px;padding:5px 12px;color:var(--muted);font-size:12px;cursor:pointer;transition:all .2s;font-family:var(--font-head)}
+.quick-btn:hover{background:rgba(255,255,255,.1);color:var(--text)}
+
+.mines-selector{display:flex;gap:6px;flex-wrap:wrap}
+.mine-opt{padding:6px 14px;border-radius:10px;border:1px solid var(--border);background:rgba(255,255,255,.04);color:var(--muted);cursor:pointer;font-size:13px;font-weight:600;transition:all .2s}
+.mine-opt:hover{border-color:var(--purple);color:var(--text)}
+.mine-opt.selected{border-color:var(--red);background:rgba(255,71,87,.1);color:var(--red)}
+
+.info-box{background:rgba(0,230,118,.06);border:1px solid rgba(0,230,118,.12);border-radius:14px;padding:14px;text-align:center;margin-bottom:16px}
+.info-box .mult{font-family:var(--font-head);font-size:28px;font-weight:800;color:var(--green)}
+.info-box .mult-label{font-size:12px;color:var(--muted);margin-top:2px}
+.info-box .ganho-atual{font-family:var(--font-head);font-size:18px;color:var(--green);margin-top:6px}
+
+.btn-start{width:100%;padding:14px;background:linear-gradient(135deg,var(--purple),var(--green));border:none;border-radius:14px;color:#fff;font-size:15px;font-weight:800;font-family:var(--font-head);cursor:pointer;transition:opacity .2s,transform .1s;margin-bottom:10px}
+.btn-start:hover{opacity:.9}
+.btn-start:disabled{opacity:.4;cursor:not-allowed;transform:none}
+.btn-cashout{width:100%;padding:14px;background:linear-gradient(135deg,var(--orange),#ff6b00);border:none;border-radius:14px;color:#fff;font-size:15px;font-weight:800;font-family:var(--font-head);cursor:pointer;display:none;margin-bottom:10px;animation:pulse 1.5s ease-in-out infinite}
+@keyframes pulse{0%,100%{box-shadow:0 0 0 0 rgba(255,149,0,.3)}50%{box-shadow:0 0 0 8px rgba(255,149,0,0)}}
+
+/* TABULEIRO */
+.board-area{display:flex;flex-direction:column;align-items:center;gap:20px}
+.board-header{text-align:center}
+.board-title{font-family:var(--font-head);font-size:22px;margin-bottom:4px}
+.board-sub{font-size:14px;color:var(--muted)}
+.board{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;width:100%;max-width:420px}
+.cell{aspect-ratio:1;background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:14px;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:26px;transition:all .15s;position:relative;overflow:hidden}
+.cell::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(255,255,255,.03),transparent);border-radius:13px}
+.cell:hover:not(.revealed):not(.disabled){background:rgba(124,106,255,.12);border-color:var(--purple);transform:scale(1.04)}
+.cell.revealed-safe{background:rgba(0,230,118,.12);border-color:rgba(0,230,118,.3);cursor:default;transform:none;animation:pop .25s ease}
+.cell.revealed-mine{background:rgba(255,71,87,.15);border-color:rgba(255,71,87,.4);cursor:default;animation:shake .3s ease}
+.cell.hint-mine{background:rgba(255,71,87,.07);border-color:rgba(255,71,87,.2)}
+.cell.disabled{cursor:default;pointer-events:none}
+@keyframes pop{0%{transform:scale(1)}50%{transform:scale(1.15)}100%{transform:scale(1)}}
+@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-4px)}75%{transform:translateX(4px)}}
+
+.result-overlay{display:none;position:fixed;inset:0;background:rgba(6,8,15,.85);backdrop-filter:blur(10px);z-index:200;align-items:center;justify-content:center}
+.result-overlay.show{display:flex}
+.result-card{background:var(--card);border:1px solid var(--border);border-radius:28px;padding:40px;text-align:center;max-width:380px;width:90%}
+.result-emoji{font-size:60px;margin-bottom:16px;display:block}
+.result-title{font-family:var(--font-head);font-size:28px;margin-bottom:8px}
+.result-amount{font-family:var(--font-head);font-size:40px;font-weight:800;margin:16px 0}
+.ra-win{color:var(--green)}
+.ra-lose{color:var(--red)}
+.btn-new-game{background:linear-gradient(135deg,var(--purple),var(--green));border:none;padding:14px 32px;border-radius:14px;color:#fff;font-size:16px;font-weight:700;font-family:var(--font-head);cursor:pointer;margin-top:8px;width:100%}
+
+@media(max-width:768px){
+  .game-wrap{grid-template-columns:1fr;gap:16px;padding:72px 12px 32px}
+  .board{gap:6px}
+  .cell{border-radius:10px;font-size:20px}
+}
+</style>
+</head>
+<body>
+<nav class="navbar">
+    <a href="/jogos" class="back-btn"><i class="fas fa-arrow-left"></i> Voltar</a>
+    <div style="font-family:var(--font-head);font-size:16px">💣 MINES</div>
+    <div class="nav-saldo">R$ <strong id="navSaldo">0,00</strong></div>
+</nav>
+
+<div class="game-wrap">
+    <!-- PAINEL -->
+    <div class="panel">
+        <div class="panel-title">💰 Configurar Aposta</div>
+
+        <div class="form-group">
+            <label>Valor da aposta</label>
+            <input type="number" class="input-field" id="apostaInput" value="1.00" min="0.5" max="500" step="0.5">
+            <div class="quick-btns">
+                <button class="quick-btn" onclick="setAposta(.5)">0.50</button>
+                <button class="quick-btn" onclick="setAposta(1)">1.00</button>
+                <button class="quick-btn" onclick="setAposta(5)">5.00</button>
+                <button class="quick-btn" onclick="setAposta(10)">10.00</button>
+                <button class="quick-btn" onclick="setAposta(25)">25.00</button>
+                <button class="quick-btn" onclick="dobrar()">2×</button>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label>Número de bombas</label>
+            <div class="mines-selector" id="minesSelector">
+                <div class="mine-opt" data-val="1">1</div>
+                <div class="mine-opt selected" data-val="3">3</div>
+                <div class="mine-opt" data-val="5">5</div>
+                <div class="mine-opt" data-val="10">10</div>
+                <div class="mine-opt" data-val="15">15</div>
+                <div class="mine-opt" data-val="24">24</div>
+            </div>
+        </div>
+
+        <div class="info-box" id="infoBox">
+            <div class="mult" id="multDisplay">1.00×</div>
+            <div class="mult-label">Multiplicador atual</div>
+            <div class="ganho-atual" id="ganhoDisplay">R$ 0,00</div>
+        </div>
+
+        <button class="btn-start" id="btnStart">Iniciar Jogo</button>
+        <button class="btn-cashout" id="btnCashout">💰 Sacar R$ <span id="cashoutVal">0,00</span></button>
+    </div>
+
+    <!-- TABULEIRO -->
+    <div class="board-area">
+        <div class="board-header">
+            <div class="board-title" id="boardTitle">Clique em Iniciar</div>
+            <div class="board-sub" id="boardSub">Configure a aposta ao lado e comece</div>
+        </div>
+        <div class="board" id="board"></div>
+    </div>
+</div>
+
+<!-- RESULTADO -->
+<div class="result-overlay" id="resultOverlay">
+    <div class="result-card">
+        <span class="result-emoji" id="resultEmoji">💣</span>
+        <div class="result-title" id="resultTitle">Você perdeu!</div>
+        <div class="result-amount" id="resultAmount" class="ra-lose">-R$ 0,00</div>
+        <div style="color:var(--muted);font-size:14px;margin-bottom:8px" id="resultSub"></div>
+        <button class="btn-new-game" id="btnNewGame">Jogar Novamente</button>
+    </div>
+</div>
+
+<script src="/assets/auth.js"></script>
+<script>
+let userData = null;
+let gameToken = null;
+let numMinas = 3;
+let reveladas = 0;
+let totalSafe = 22;
+let multAtual = 1;
+let emJogo = false;
+
+// Inicializar
+(async () => {
+    userData = await Auth.exigirAuth();
+    if (!userData) return;
+    document.getElementById('navSaldo').textContent = parseFloat(userData.saldo).toFixed(2);
+    renderBoard(false);
+})();
+
+// Seletor de minas
+document.querySelectorAll('.mine-opt').forEach(el => {
+    el.addEventListener('click', function() {
+        if (emJogo) return;
+        document.querySelectorAll('.mine-opt').forEach(e => e.classList.remove('selected'));
+        this.classList.add('selected');
+        numMinas = parseInt(this.dataset.val);
+        totalSafe = 25 - numMinas;
+    });
+});
+
+function setAposta(v) { if(!emJogo) document.getElementById('apostaInput').value = v.toFixed(2); }
+function dobrar() { if(!emJogo) { const v = parseFloat(document.getElementById('apostaInput').value)||1; document.getElementById('apostaInput').value = Math.min(v*2, 500).toFixed(2); } }
+
+function renderBoard(playing) {
+    const board = document.getElementById('board');
+    board.innerHTML = '';
+    for (let i = 0; i < 25; i++) {
+        const cell = document.createElement('div');
+        cell.className = 'cell' + (playing ? '' : ' disabled');
+        cell.dataset.pos = i;
+        cell.innerHTML = playing ? '❓' : '⬜';
+        if (playing) cell.addEventListener('click', () => revelarCelula(i));
+        board.appendChild(cell);
+    }
+}
+
+async function iniciarJogo() {
+    const aposta = parseFloat(document.getElementById('apostaInput').value);
+    if (!aposta || aposta < 0.5) { alert('Aposta mínima: R$ 0,50'); return; }
+
+    const btn = document.getElementById('btnStart');
+    btn.disabled = true;
+    btn.textContent = 'Iniciando...';
+
+    try {
+        const r = await Auth.fetchAuth(`${Auth.API}/api/jogo/mines/iniciar`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ aposta, num_minas: numMinas })
+        });
+        const d = await r.json();
+        if (!d.success) { alert(d.error || 'Erro'); btn.disabled=false; btn.textContent='Iniciar Jogo'; return; }
+
+        gameToken = d.gameToken;
+        reveladas = 0;
+        totalSafe = 25 - numMinas;
+        multAtual = 1;
+        emJogo = true;
+
+        document.getElementById('boardTitle').textContent = '💣 Mines — Boa sorte!';
+        document.getElementById('boardSub').textContent = `${numMinas} bombas escondidas • Revele células seguras`;
+        document.getElementById('multDisplay').textContent = '1.00×';
+        document.getElementById('ganhoDisplay').textContent = 'R$ ' + aposta.toFixed(2);
+        document.getElementById('btnStart').style.display = 'none';
+        document.getElementById('btnCashout').style.display = 'block';
+        document.getElementById('cashoutVal').textContent = aposta.toFixed(2);
+        document.getElementById('apostaInput').disabled = true;
+
+        renderBoard(true);
+
+        // Atualizar saldo local
+        userData.saldo = parseFloat(userData.saldo) - aposta;
+        document.getElementById('navSaldo').textContent = userData.saldo.toFixed(2);
+    } catch(e) {
+        alert('Erro ao iniciar jogo');
+        btn.disabled = false;
+        btn.textContent = 'Iniciar Jogo';
+    }
+}
+
+async function revelarCelula(posicao) {
+    if (!emJogo || !gameToken) return;
+    const cell = document.querySelector(`[data-pos="${posicao}"]`);
+    if (cell.classList.contains('revealed-safe') || cell.classList.contains('revealed-mine')) return;
+
+    cell.style.pointerEvents = 'none';
+
+    try {
+        const r = await Auth.fetchAuth(`${Auth.API}/api/jogo/mines/revelar`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ gameToken, posicao })
+        });
+        const d = await r.json();
+        if (!d.success) { cell.style.pointerEvents=''; return; }
+
+        if (d.explodiu) {
+            cell.className = 'cell revealed-mine disabled';
+            cell.innerHTML = '💣';
+            // Mostrar todas as minas
+            d.posicoesMinas.forEach(pos => {
+                const c = document.querySelector(`[data-pos="${pos}"]`);
+                if (c && !c.classList.contains('revealed-safe')) {
+                    c.className = 'cell hint-mine disabled';
+                    c.innerHTML = '💣';
+                }
+            });
+            document.querySelectorAll('.cell:not(.revealed-mine):not(.hint-mine)').forEach(c => {
+                c.className = 'cell disabled';
+                c.innerHTML = '💎';
+            });
+            emJogo = false;
+            mostrarResultado(false, d.aposta, 0, d.aposta);
+        } else {
+            gameToken = d.newGameToken;
+            reveladas = d.reveladas;
+            multAtual = d.multiplicador;
+            cell.className = 'cell revealed-safe disabled';
+            cell.innerHTML = '💎';
+            document.getElementById('multDisplay').textContent = multAtual.toFixed(2) + '×';
+            document.getElementById('ganhoDisplay').textContent = 'R$ ' + d.ganhoAtual.toFixed(2);
+            document.getElementById('cashoutVal').textContent = d.ganhoAtual.toFixed(2);
+
+            if (reveladas >= totalSafe) {
+                // Ganhou tudo!
+                await fazerCashout();
+            }
+        }
+    } catch(e) {
+        cell.style.pointerEvents = '';
+    }
+}
+
+async function fazerCashout() {
+    if (!emJogo || !gameToken) return;
+    try {
+        const r = await Auth.fetchAuth(`${Auth.API}/api/jogo/mines/cashout`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ gameToken })
+        });
+        const d = await r.json();
+        if (!d.success) { alert(d.error||'Erro no cashout'); return; }
+
+        emJogo = false;
+        const aposta = parseFloat(document.getElementById('apostaInput').value);
+        document.getElementById('navSaldo').textContent = parseFloat(d.novoSaldo).toFixed(2);
+        mostrarResultado(true, aposta, d.ganho, d.ganho - aposta);
+    } catch(e) {
+        alert('Erro ao fazer cashout');
+    }
+}
+
+function mostrarResultado(ganhou, aposta, ganho, lucro) {
+    document.getElementById('resultEmoji').textContent = ganhou ? '🎉' : '💣';
+    document.getElementById('resultTitle').textContent = ganhou ? 'Você ganhou!' : 'BOOM! Você perdeu!';
+    const amountEl = document.getElementById('resultAmount');
+    if (ganhou) {
+        amountEl.textContent = `+R$ ${ganho.toFixed(2)}`;
+        amountEl.className = 'result-amount ra-win';
+        document.getElementById('resultSub').textContent = `Lucro: R$ ${lucro.toFixed(2)} • ${multAtual.toFixed(2)}×`;
+    } else {
+        amountEl.textContent = `-R$ ${aposta.toFixed(2)}`;
+        amountEl.className = 'result-amount ra-lose';
+        document.getElementById('resultSub').textContent = 'Mais sorte na próxima!';
+    }
+    document.getElementById('resultOverlay').classList.add('show');
+}
+
+function novoJogo() {
+    document.getElementById('resultOverlay').classList.remove('show');
+    emJogo = false;
+    gameToken = null;
+    reveladas = 0;
+    multAtual = 1;
+    document.getElementById('btnStart').style.display = 'block';
+    document.getElementById('btnStart').disabled = false;
+    document.getElementById('btnStart').textContent = 'Iniciar Jogo';
+    document.getElementById('btnCashout').style.display = 'none';
+    document.getElementById('apostaInput').disabled = false;
+    document.getElementById('boardTitle').textContent = 'Clique em Iniciar';
+    document.getElementById('boardSub').textContent = 'Configure a aposta ao lado e comece';
+    document.getElementById('multDisplay').textContent = '1.00×';
+    document.getElementById('ganhoDisplay').textContent = 'R$ 0,00';
+    renderBoard(false);
+}
+
+document.getElementById('btnStart').addEventListener('click', iniciarJogo);
+document.getElementById('btnCashout').addEventListener('click', fazerCashout);
+document.getElementById('btnNewGame').addEventListener('click', novoJogo);
+</script>
+</body>
+</html>

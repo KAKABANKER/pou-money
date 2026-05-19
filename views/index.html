@@ -1,0 +1,751 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>Pou Money | Plataforma Oficial - Ganhe Dinheiro Real</title>
+    <meta name="description" content="Pou Money - Plataforma oficial do jogo Pou que paga de verdade. Minigames, missões diárias e saques via PIX.">
+    <meta name="keywords" content="pou money, jogo do pou, pou cash, ganhar dinheiro, plataforma de games, pou pay">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #0A0C15;
+            color: #E8EDF2;
+            overflow-x: hidden;
+        }
+
+        .bg-gradient {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at 20% 50%, rgba(108, 92, 231, 0.15), transparent 50%),
+                        radial-gradient(circle at 80% 80%, rgba(0, 191, 163, 0.08), transparent 50%),
+                        linear-gradient(135deg, #0A0C15 0%, #111827 100%);
+            z-index: -2;
+        }
+
+        /* Navbar */
+        .navbar {
+            background: rgba(10, 12, 21, 0.95);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(108, 92, 231, 0.2);
+            padding: 16px 0;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .container {
+            max-width: 1280px;
+            margin: 0 auto;
+            padding: 0 32px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            text-decoration: none;
+        }
+
+        .brand-icon {
+            width: 45px;
+            height: 45px;
+            border-radius: 14px;
+            overflow: hidden;
+            box-shadow: 0 8px 20px rgba(108, 92, 231, 0.3);
+        }
+
+        .brand-icon img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .brand-text {
+            font-size: 26px;
+            font-weight: 800;
+            background: linear-gradient(135deg, #FFFFFF, #6C5CE7);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            letter-spacing: -0.5px;
+        }
+
+        .brand-text span {
+            color: #00BFA3;
+            background: none;
+            -webkit-background-clip: unset;
+        }
+
+        .nav-menu {
+            display: flex;
+            gap: 32px;
+            align-items: center;
+        }
+
+        .nav-link {
+            color: #A0A8C0;
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s;
+            font-size: 15px;
+        }
+
+        .nav-link:hover {
+            color: #6C5CE7;
+        }
+
+        .btn {
+            padding: 10px 28px;
+            border-radius: 40px;
+            font-weight: 600;
+            font-size: 14px;
+            transition: all 0.3s;
+            cursor: pointer;
+            border: none;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #6C5CE7, #00BFA3);
+            color: white;
+            box-shadow: 0 4px 15px rgba(108, 92, 231, 0.3);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(108, 92, 231, 0.4);
+        }
+
+        .btn-outline {
+            background: transparent;
+            border: 1px solid rgba(108, 92, 231, 0.5);
+            color: #6C5CE7;
+        }
+
+        .btn-outline:hover {
+            background: rgba(108, 92, 231, 0.1);
+            border-color: #6C5CE7;
+        }
+
+        .btn-large {
+            padding: 16px 48px;
+            font-size: 18px;
+        }
+
+        /* Hero */
+        .hero {
+            padding: 140px 32px 80px;
+            text-align: center;
+        }
+
+        .hero-badge {
+            display: inline-block;
+            background: rgba(108, 92, 231, 0.15);
+            border: 1px solid rgba(108, 92, 231, 0.3);
+            border-radius: 100px;
+            padding: 6px 16px;
+            font-size: 13px;
+            color: #6C5CE7;
+            margin-bottom: 24px;
+        }
+
+        .hero h1 {
+            font-size: 58px;
+            font-weight: 800;
+            letter-spacing: -1.5px;
+            line-height: 1.1;
+            margin-bottom: 24px;
+            background: linear-gradient(135deg, #FFFFFF, #A0A8C0);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+
+        .hero h1 span {
+            background: linear-gradient(135deg, #6C5CE7, #00BFA3);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+
+        .hero-subtitle {
+            font-size: 18px;
+            color: #8A92AB;
+            max-width: 600px;
+            margin: 0 auto 32px;
+            line-height: 1.5;
+        }
+
+        .stats {
+            display: flex;
+            justify-content: center;
+            gap: 48px;
+            margin-top: 48px;
+            flex-wrap: wrap;
+        }
+
+        .stat-number {
+            font-size: 32px;
+            font-weight: 800;
+            color: #6C5CE7;
+        }
+
+        .stat-label {
+            font-size: 13px;
+            color: #6A7290;
+        }
+
+        /* Cards */
+        .section {
+            padding: 80px 32px;
+        }
+
+        .section-title {
+            text-align: center;
+            font-size: 36px;
+            font-weight: 700;
+            margin-bottom: 16px;
+        }
+
+        .section-subtitle {
+            text-align: center;
+            color: #8A92AB;
+            margin-bottom: 48px;
+        }
+
+        .cards-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 32px;
+            max-width: 1280px;
+            margin: 0 auto;
+        }
+
+        .card {
+            background: rgba(20, 24, 36, 0.8);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(108, 92, 231, 0.15);
+            border-radius: 24px;
+            padding: 32px;
+            transition: all 0.3s;
+            text-align: center;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            border-color: rgba(108, 92, 231, 0.4);
+        }
+
+        .card-icon {
+            width: 70px;
+            height: 70px;
+            margin: 0 auto 20px;
+            border-radius: 20px;
+            overflow: hidden;
+            background: linear-gradient(135deg, rgba(108, 92, 231, 0.2), rgba(0, 191, 163, 0.1));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .card-icon img {
+            width: 45px;
+            height: 45px;
+            object-fit: contain;
+        }
+
+        .card h3 {
+            font-size: 22px;
+            margin-bottom: 12px;
+        }
+
+        .card p {
+            color: #8A92AB;
+            line-height: 1.5;
+        }
+
+        /* FAQ */
+        .faq-section {
+            background: linear-gradient(180deg, #0A0C15, #0F111A);
+            padding: 80px 32px;
+        }
+
+        .faq-container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .faq-item {
+            background: rgba(20, 24, 36, 0.6);
+            border: 1px solid rgba(108, 92, 231, 0.1);
+            border-radius: 20px;
+            margin-bottom: 16px;
+            overflow: hidden;
+        }
+
+        .faq-question {
+            padding: 24px 28px;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-weight: 600;
+            font-size: 18px;
+        }
+
+        .faq-question i {
+            color: #6C5CE7;
+            transition: transform 0.3s;
+        }
+
+        .faq-answer {
+            padding: 0 28px 24px;
+            color: #8A92AB;
+            line-height: 1.6;
+            display: none;
+            border-top: 1px solid rgba(108, 92, 231, 0.1);
+        }
+
+        .faq-item.active .faq-answer {
+            display: block;
+        }
+
+        .faq-item.active .faq-question i {
+            transform: rotate(180deg);
+        }
+
+        /* CTA */
+        .cta-section {
+            text-align: center;
+            padding: 80px 32px;
+            background: linear-gradient(135deg, rgba(108, 92, 231, 0.1), rgba(0, 191, 163, 0.05));
+            margin: 40px 32px;
+            border-radius: 48px;
+            border: 1px solid rgba(108, 92, 231, 0.2);
+        }
+
+        .cta-section h2 {
+            font-size: 38px;
+            margin-bottom: 16px;
+        }
+
+        .price-badge {
+            display: inline-block;
+            background: linear-gradient(135deg, #6C5CE7, #00BFA3);
+            padding: 12px 24px;
+            border-radius: 60px;
+            font-weight: 700;
+            margin-top: 24px;
+        }
+
+        /* Footer */
+        .footer {
+            background: #06080F;
+            padding: 48px 32px 32px;
+            border-top: 1px solid rgba(108, 92, 231, 0.1);
+            text-align: center;
+        }
+
+        .footer-logos {
+            display: flex;
+            justify-content: center;
+            gap: 24px;
+            margin-bottom: 24px;
+            flex-wrap: wrap;
+        }
+
+        .footer-badge {
+            background: #1A1F2E;
+            padding: 6px 16px;
+            border-radius: 30px;
+            font-size: 13px;
+            font-weight: 500;
+        }
+
+        .copyright {
+            font-size: 12px;
+            color: #5A627F;
+        }
+
+        /* Floating Pous com imagens */
+        .floating-pou {
+            position: absolute;
+            width: 80px;
+            height: 80px;
+            animation: float 4s ease-in-out infinite;
+            pointer-events: none;
+        }
+
+        .floating-pou img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-20px) rotate(5deg); }
+        }
+
+        .hero-container {
+            position: relative;
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .pou-1 { top: -30px; left: -50px; width: 90px; animation-delay: 0s; }
+        .pou-2 { bottom: -40px; right: -60px; width: 100px; animation-delay: 0.5s; }
+        .pou-3 { top: 30%; left: -70px; width: 70px; animation-delay: 1s; }
+        .pou-4 { bottom: 10%; right: -80px; width: 85px; animation-delay: 1.5s; }
+        .pou-5 { top: 60%; left: -40px; width: 65px; animation-delay: 0.8s; }
+
+        @media (max-width: 768px) {
+            .floating-pou { display: none; }
+            .hero h1 { font-size: 36px; }
+            .section-title { font-size: 28px; }
+            .container { padding: 0 20px; }
+            .stats { gap: 24px; }
+        }
+
+        /* Mobile */
+        .mobile-menu-btn {
+            display: none;
+            background: none;
+            border: none;
+            font-size: 28px;
+            color: white;
+            cursor: pointer;
+        }
+
+        .mobile-nav {
+            display: none;
+            position: fixed;
+            top: 80px;
+            left: 0;
+            width: 100%;
+            background: #0F111A;
+            padding: 24px;
+            flex-direction: column;
+            gap: 20px;
+            border-bottom: 1px solid rgba(108, 92, 231, 0.2);
+            z-index: 999;
+        }
+
+        @media (max-width: 768px) {
+            .nav-menu { display: none; }
+            .mobile-menu-btn { display: block; }
+        }
+
+        /* Animations */
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .animate { animation: fadeInUp 0.6s ease-out forwards; }
+
+        /* Notificações */
+        .notification-container {
+            position: fixed;
+            bottom: 24px;
+            left: 24px;
+            z-index: 9999;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            max-width: 380px;
+        }
+
+        .pou-notification {
+            animation: slideInLeft 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+        }
+
+        @keyframes slideInLeft {
+            from { opacity: 0; transform: translateX(-100px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+
+        @keyframes slideOutLeft {
+            from { opacity: 1; transform: translateX(0); }
+            to { opacity: 0; transform: translateX(-100px); }
+        }
+
+        .notification-card {
+            background: linear-gradient(135deg, #1A1F2E 0%, #131725 100%);
+            backdrop-filter: blur(12px);
+            border-radius: 20px;
+            padding: 16px 20px;
+            margin-bottom: 12px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(108, 92, 231, 0.2);
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            cursor: pointer;
+        }
+
+        .notification-icon {
+            width: 48px;
+            height: 48px;
+            background: linear-gradient(135deg, rgba(108, 92, 231, 0.2), rgba(0, 191, 163, 0.1));
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            overflow: hidden;
+        }
+
+        .notification-icon img {
+            width: 30px;
+            height: 30px;
+            object-fit: contain;
+        }
+
+        .notification-content { flex: 1; }
+        .notification-title { font-weight: 700; font-size: 13px; color: #00BFA3; margin-bottom: 4px; }
+        .notification-message { font-size: 14px; color: #E8EDF2; }
+        .notification-message strong { color: #6C5CE7; }
+        .notification-time { font-size: 10px; color: #6A7290; margin-top: 6px; display: flex; align-items: center; gap: 6px; }
+        .notification-close {
+            width: 28px;
+            height: 28px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            color: #8A92AB;
+        }
+
+        @media (max-width: 480px) {
+            .notification-container { left: 16px; right: 16px; max-width: calc(100% - 32px); }
+            .notification-card { padding: 12px 16px; }
+        }
+
+        .divider-icons {
+            display: flex;
+            justify-content: center;
+            gap: 48px;
+            padding: 40px 32px;
+            flex-wrap: wrap;
+        }
+
+        .divider-item {
+            text-align: center;
+        }
+
+        .divider-icon {
+            width: 60px;
+            height: 60px;
+            margin: 0 auto 12px;
+        }
+
+        .divider-icon img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+    </style>
+</head>
+<body>
+<div class="bg-gradient"></div>
+
+<!-- Navbar -->
+<nav class="navbar">
+    <div class="container">
+        <a href="#" class="brand">
+            <div class="brand-icon">
+                <img src="img/pou2.webp" alt="Pou Logo" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 100 100\'%3E%3Ccircle cx=\'50\' cy=\'50\' r=\'45\' fill=\'%236C5CE7\'/%3E%3Ccircle cx=\'35\' cy=\'40\' r=\'6\' fill=\'white\'/%3E%3Ccircle cx=\'65\' cy=\'40\' r=\'6\' fill=\'white\'/%3E%3Cpath d=\'M35 65 Q50 80 65 65\' stroke=\'white\' stroke-width=\'4\' fill=\'none\'/%3E%3C/svg%3E'">
+            </div>
+            <div class="brand-text">POU <span>MONEY</span></div>
+        </a>
+        <div class="nav-menu">
+            <a href="#" class="nav-link">Início</a>
+            <a href="#" class="nav-link">Jogar</a>
+            <a href="#" class="nav-link">Ranking</a>
+            <a href="#" class="nav-link">Suporte</a>
+            <a href="#" class="btn btn-outline">Entrar</a>
+            <a href="#" class="btn btn-primary">Cadastrar</a>
+        </div>
+        <button class="mobile-menu-btn" id="menuBtn"><i class="fas fa-bars"></i></button>
+    </div>
+    <div class="mobile-nav" id="mobileNav">
+        <a href="index.html" class="nav-link">Início</a>
+        <a href="jogar.html" class="nav-link">Jogar</a>
+        <a href="ranking.html" class="nav-link">Ranking</a>
+        <a href="suporte.html" class="nav-link">Suporte</a>
+        <a href="login.html" class="btn btn-outline">Entrar</a>
+        <a href="cadastro.html" class="btn btn-primary">Cadastrar</a>
+    </div>
+</nav>
+
+<!-- Hero com Pous flutuantes -->
+<section class="hero">
+    <div class="hero-container">
+        <div class="floating-pou pou-1"><img src="img/pou2.webp" alt="Pou" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 80 80\'%3E%3Ccircle cx=\'40\' cy=\'40\' r=\'35\' fill=\'%23f5a623\'/%3E%3Ccircle cx=\'30\' cy=\'32\' r=\'4\' fill=\'white\'/%3E%3Ccircle cx=\'50\' cy=\'32\' r=\'4\' fill=\'white\'/%3E%3C/svg%3E'"></div>
+        <div class="floating-pou pou-2"><img src="img/pou2.webp" alt="Pou" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 80 80\'%3E%3Ccircle cx=\'40\' cy=\'40\' r=\'35\' fill=\'%23ff6b35\'/%3E%3Ccircle cx=\'30\' cy=\'32\' r=\'4\' fill=\'white\'/%3E%3Ccircle cx=\'50\' cy=\'32\' r=\'4\' fill=\'white\'/%3E%3C/svg%3E'"></div>
+        <div class="floating-pou pou-3"><img src="img/pou2.webp" alt="Pou" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 80 80\'%3E%3Ccircle cx=\'40\' cy=\'40\' r=\'35\' fill=\'%23e89520\'/%3E%3Ccircle cx=\'30\' cy=\'32\' r=\'4\' fill=\'white\'/%3E%3Ccircle cx=\'50\' cy=\'32\' r=\'4\' fill=\'white\'/%3E%3C/svg%3E'"></div>
+        <div class="floating-pou pou-4"><img src="img/pou2.webp" alt="Pou" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 80 80\'%3E%3Ccircle cx=\'40\' cy=\'40\' r=\'35\' fill=\'%23f5a623\'/%3E%3Ccircle cx=\'30\' cy=\'32\' r=\'4\' fill=\'white\'/%3E%3Ccircle cx=\'50\' cy=\'32\' r=\'4\' fill=\'white\'/%3E%3C/svg%3E'"></div>
+        <div class="floating-pou pou-5"><img src="img/pou2.webp" alt="Pou" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 80 80\'%3E%3Ccircle cx=\'40\' cy=\'40\' r=\'35\' fill=\'%23ff8c42\'/%3E%3Ccircle cx=\'30\' cy=\'32\' r=\'4\' fill=\'white\'/%3E%3Ccircle cx=\'50\' cy=\'32\' r=\'4\' fill=\'white\'/%3E%3C/svg%3E'"></div>
+        
+        <div class="hero-badge"><i class="fas fa-trophy"></i> +50.000 jogadores ativos</div>
+        <h1>Transforme sua diversão<br>em <span>dinheiro real</span></h1>
+        <p class="hero-subtitle">Pou Money é a plataforma que revolucionou os jogos mobile. Corra, cuide do seu Pou, complete missões e receba prêmios em PIX na hora!</p>
+        <a href="jogar.html" class="btn btn-primary btn-large"><i class="fas fa-play"></i> Começar a Ganhar</a>
+        <div class="stats">
+            <div class="stat-item"><div class="stat-number">R$ 2.5M+</div><div class="stat-label">Pagos em Prêmios</div></div>
+            <div class="stat-item"><div class="stat-number">150K+</div><div class="stat-label">Jogadores</div></div>
+            <div class="stat-item"><div class="stat-number">24/7</div><div class="stat-label">Suporte Ativo</div></div>
+        </div>
+    </div>
+</section>
+
+<!-- Cards com imagens -->
+<section class="section">
+    <h2 class="section-title">Por que escolher o <span style="color:#6C5CE7">Pou Money?</span></h2>
+    <p class="section-subtitle">A experiência definitiva para quem quer se divertir e lucrar</p>
+    <div class="cards-grid">
+        <div class="card">
+            <div class="card-icon"><img src="img/pix.png" alt="Saque" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 50 50\'%3E%3Ctext x=\'25\' y=\'35\' text-anchor=\'middle\' fill=\'%236C5CE7\' font-size=\'30\'%3E⚡%3C/text%3E%3C/svg%3E'"></div>
+            <h3>Saque Instantâneo</h3>
+            <p>Receba seus ganhos via PIX em menos de 5 segundos. Sem burocracia, sem taxas escondidas.</p>
+        </div>
+        <div class="card">
+            <div class="card-icon"><img src="img/control.webp" alt="Gameplay" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 50 50\'%3E%3Ctext x=\'25\' y=\'35\' text-anchor=\'middle\' fill=\'%236C5CE7\' font-size=\'30\'%3E🎮%3C/text%3E%3C/svg%3E'"></div>
+            <h3>Minigames Exclusivos</h3>
+            <p>Corrida do Pou, Alimentação Turbo e Torneios semanais com prêmios especiais.</p>
+        </div>
+        <div class="card">
+            <div class="card-icon"><img src="img/indicar.webp" alt="Indicação" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 50 50\'%3E%3Ctext x=\'25\' y=\'35\' text-anchor=\'middle\' fill=\'%236C5CE7\' font-size=\'30\'%3E👥%3C/text%3E%3C/svg%3E'"></div>
+            <h3>Sistema de Indicação</h3>
+            <p>Ganhe R$5 por cada amigo que se cadastrar e jogar. Bônus ilimitados!</p>
+        </div>
+        <div class="card">
+            <div class="card-icon"><img src="img/seg.webp" alt="Segurança" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 50 50\'%3E%3Ctext x=\'25\' y=\'35\' text-anchor=\'middle\' fill=\'%236C5CE7\' font-size=\'30\'%3E🔒%3C/text%3E%3C/svg%3E'"></div>
+            <h3>Segurança Total</h3>
+            <p>Plataforma licenciada e criptografada. Seus dados e ganhos protegidos 24h.</p>
+        </div>
+    </div>
+</section>
+
+<!-- Divisor com imagens -->
+<div class="divider-icons">
+    <div class="divider-item"><div class="divider-icon"><img src="img/coin.webp" alt="Moedas" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 60 60\'%3E%3Ccircle cx=\'30\' cy=\'30\' r=\'25\' fill=\'%236C5CE7\'/%3E%3Ctext x=\'30\' y=\'38\' text-anchor=\'middle\' fill=\'white\' font-size=\'24\'%3E💰%3C/text%3E%3C/svg%3E'"></div><p>Moedas Valiosas</p></div>
+    <div class="divider-item"><div class="divider-icon"><img src="img/speed.webp" alt="Velocidade" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 60 60\'%3E%3Ccircle cx=\'30\' cy=\'30\' r=\'25\' fill=\'%2300BFA3\'/%3E%3Ctext x=\'30\' y=\'38\' text-anchor=\'middle\' fill=\'white\' font-size=\'24\'%3E⚡%3C/text%3E%3C/svg%3E'"></div><p>Gameplay Rápido</p></div>
+    <div class="divider-item"><div class="divider-icon"><img src="img/ranking.webp" alt="Ranking" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 60 60\'%3E%3Ccircle cx=\'30\' cy=\'30\' r=\'25\' fill=\'%236C5CE7\'/%3E%3Ctext x=\'30\' y=\'38\' text-anchor=\'middle\' fill=\'white\' font-size=\'24\'%3E🏆%3C/text%3E%3C/svg%3E'"></div><p>Ranking Global</p></div>
+</div>
+
+<!-- FAQ -->
+<section class="faq-section">
+    <div class="faq-container">
+        <h2 class="section-title">Dúvidas Frequentes</h2>
+        <p class="section-subtitle">Tudo o que você precisa saber para começar</p>
+        <div class="faq-item active"><div class="faq-question">Como funciona o Pou Money? <i class="fas fa-chevron-down"></i></div><div class="faq-answer">Pou Money combina a nostalgia do jogo Pou com recompensas reais. Você joga minigames, completa missões diárias, coleta moedas e converte em dinheiro via PIX.</div></div>
+        <div class="faq-item"><div class="faq-question">Como posso sacar meus ganhos? <i class="fas fa-chevron-down"></i></div><div class="faq-answer">Saques instantâneos via PIX. Basta ter uma chave cadastrada. O valor cai em menos de 30 segundos, 24/7.</div></div>
+        <div class="faq-item"><div class="faq-question">Preciso investir para jogar? <i class="fas fa-chevron-down"></i></div><div class="faq-answer">Depósito mínimo de R$10 para ativar sua conta. Bônus de 100% no primeiro depósito!</div></div>
+        <div class="faq-item"><div class="faq-question">Como funciona o programa de indicação? <i class="fas fa-chevron-down"></i></div><div class="faq-answer">Cada amigo que se cadastrar pelo seu link e depositar R$20, você ganha R$5. Sem limite de indicações!</div></div>
+        <div class="faq-item"><div class="faq-question">É seguro? A plataforma é confiável? <i class="fas fa-chevron-down"></i></div><div class="faq-answer">Sim! Licença GLH-16289876512, criptografia SSL e milhares de pagamentos realizados com sucesso.</div></div>
+    </div>
+</section>
+
+<!-- CTA -->
+<div class="cta-section">
+    <h2>Pronto para começar sua jornada?</h2>
+    <p style="color: #8A92AB; margin-bottom: 24px;">Mais de 50 mil jogadores já estão ganhando dinheiro com o Pou Money</p>
+    <a href="#" class="btn btn-primary btn-large"><i class="fab fa-pix"></i> Criar minha conta grátis</a>
+    <div class="price-badge"><i class="fas fa-gift"></i> Bônus exclusivo de R$10 para novos usuários!</div>
+</div>
+
+<!-- Footer -->
+<footer class="footer">
+    <div class="footer-logos"><div class="footer-badge">18+</div><div class="footer-badge">Jogo Responsável</div><div class="footer-badge">PIX Garantido</div></div>
+    <div class="copyright">© 2025 Pou Money. Todos os direitos reservados. Licenciado sob GLH-16289876512. Jogue com responsabilidade.</div>
+</footer>
+
+<!-- Notificações -->
+<div id="notificationContainer" class="notification-container"></div>
+
+<script>
+    // Mobile menu
+    const menuBtn = document.getElementById('menuBtn');
+    const mobileNav = document.getElementById('mobileNav');
+    menuBtn.addEventListener('click', () => { mobileNav.style.display = mobileNav.style.display === 'flex' ? 'none' : 'flex'; });
+    document.querySelectorAll('.mobile-nav a').forEach(link => { link.addEventListener('click', () => { mobileNav.style.display = 'none'; }); });
+
+    // FAQ Accordion
+    document.querySelectorAll('.faq-question').forEach(question => {
+        question.addEventListener('click', () => { question.parentElement.classList.toggle('active'); });
+    });
+
+    // Notifications System
+    const nomes = ['Carlos A.', 'Mariana S.', 'Rafael L.', 'Beatriz C.', 'Lucas M.', 'Fernanda R.', 'PouMaster', 'Ana P.', 'Gustavo N.', 'Juliana M.', 'Rodrigo F.', 'Camila L.', 'Thiago S.', 'Larissa O.', 'Felipe A.', 'Isabela C.'];
+    const acoes = ['sacou', 'ganhou', 'recebeu via PIX', 'retirou'];
+    const valores = ['R$ 50,00', 'R$ 75,00', 'R$ 100,00', 'R$ 32,00', 'R$ 120,00', 'R$ 45,00', 'R$ 200,00', 'R$ 63,00', 'R$ 87,00', 'R$ 150,00'];
+    
+    const container = document.getElementById('notificationContainer');
+    
+    function formatTime() { const now = new Date(); return `${now.getHours().toString().padStart(2,'0')}:${now.getMinutes().toString().padStart(2,'0')}`; }
+    
+    function createNotification(nome, acao, valor) {
+        const div = document.createElement('div');
+        div.className = 'pou-notification';
+        const isSaque = acao === 'sacou' || acao === 'retirou';
+        const acaoTexto = isSaque ? 'acabou de sacar' : 'acabou de ganhar';
+        const iconImg = '<img src="img/iconuser.webp" alt="Pou" onerror="this.src=\'data:image/svg+xml,%3Csvg xmlns=\\\'http://www.w3.org/2000/svg\\\' viewBox=\\\'0 0 50 50\\\'%3E%3Ccircle cx=\\\'25\\\' cy=\\\'25\\\' r=\\\'22\\\' fill=\\\'%236C5CE7\\\'/%3E%3C/svg%3E\'">';
+        div.innerHTML = `
+            <div class="notification-card">
+                <div class="notification-icon">${iconImg}</div>
+                <div class="notification-content">
+                    <div class="notification-title">${isSaque ? 'SAQUE REALIZADO' : 'PRÊMIO RECEBIDO'}</div>
+                    <div class="notification-message"><strong>${nome}</strong> ${acaoTexto} <strong>${valor}</strong></div>
+                    <div class="notification-time"><i class="far fa-clock"></i> ${formatTime()} <span style="color:#00BFA3;">●</span> Pou Money</div>
+                </div>
+                <div class="notification-close"><i class="fas fa-times"></i></div>
+            </div>`;
+        const closeBtn = div.querySelector('.notification-close');
+        closeBtn.addEventListener('click', (e) => { e.stopPropagation(); removeNotification(div); });
+        div.addEventListener('click', () => removeNotification(div));
+        return div;
+    }
+    
+    function removeNotification(el) { el.style.animation = 'slideOutLeft 0.3s ease forwards'; setTimeout(() => el.remove(), 300); }
+    
+    function showNotif() {
+        const nome = nomes[Math.floor(Math.random() * nomes.length)];
+        const acao = acoes[Math.floor(Math.random() * acoes.length)];
+        const valor = valores[Math.floor(Math.random() * valores.length)];
+        const notif = createNotification(nome, acao, valor);
+        container.appendChild(notif);
+        setTimeout(() => { if(notif.parentNode) removeNotification(notif); }, 6000);
+    }
+    
+    setInterval(showNotif, 4200);
+    setTimeout(showNotif, 1000);
+    
+    // Scroll animations
+    const observer = new IntersectionObserver((entries) => { entries.forEach(e => { if(e.isIntersecting) e.target.classList.add('animate'); }); }, { threshold: 0.1 });
+    document.querySelectorAll('.card, .faq-item, .cta-section').forEach(el => observer.observe(el));
+    document.querySelector('.hero').classList.add('animate');
+</script>
+</body>
+</html>
